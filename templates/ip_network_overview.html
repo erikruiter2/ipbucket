@@ -1,0 +1,31 @@
+{% extends "base_elements.html" %}
+{% block scripts %}<script src="/js/ipbucket.js"></script>
+<script src="/js/jquery.treetable.js"></script>
+{% endblock %} 
+{% block bodyclass %}class='ip_network_overview'{% endblock %}
+{% block maincontent %}
+
+<div id="maincontent">
+<h1>Networks</h1>
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="example-basic-static" name="example-basic-static">
+<thead>
+  <tr>
+    <th>Address</th>
+    <th>name</th>
+    <th>Utilisation</th>
+    <th><input type=checkbox></input></th>
+  </tr>
+</thead>
+</table>
+
+<select id='NetworksActionSelect'>
+<option value="">-- Choose Action --</option>
+<option value="start">start</option>
+<option value="stop">stop</option>
+<option value="forcestop">force stop</option>
+<option value="remove">remove</option>
+</select>
+
+<button id='ip_network_table_button'>Go</button>
+</div>
+{% endblock %}

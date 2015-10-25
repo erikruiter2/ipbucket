@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+{% block head %}
+{% endblock %}
+
+<body {% block bodyclass %}{% endblock %}>
+<div id="switcher" style="position: absolute; right: 0"></div>
+<div id="title">
+    <center>
+        <div id="logo"></div>
+    </center><h1>IP Bucket</h1>
+</div>
+
+<div id="titlesub">
+    <center>
+        <div>
+            <table>
+                <tr>
+                </tr>
+            </table>
+        </div>
+    </center>
+</div>
+<div id="mainwindow">
+
+{% block navigation %}
+{% endblock %}
+
+<div id="mainspace" style="float: left; width: 22px; height: 100px"> </div>
+<div id="notificationarea"></div>
+{%block maincontent %}
+{% endblock %}
+
+</body>
+</html>

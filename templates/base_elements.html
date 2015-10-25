@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block head %}
+<head>
+<title>IP Bucket</title>
+
+<link rel="stylesheet" type="text/css" href="/css/new.css">
+<link rel="stylesheet" type="text/css" href="/css/demo_page.css"> 
+<link rel="stylesheet" type="text/css" href="/css/demo_table.css">
+<link rel="stylesheet" type="text/css" href="/css/demo_table_jui.css">
+<link rel="stylesheet" type="text/css" href="/css/themes/sunny/jquery-ui.theme.css">
+<link rel="stylesheet" type="text/css" href="/css/themes/sunny/jquery-ui.structure.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery.treetable.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery.treetable.theme.default.css">
+
+
+
+<script src="/js/jquery-1.11.0.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/jquery.jeditable.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<script src="/js/jquery.dataTables.editable.js"></script>
+<script src="/js/functions.js"></script>
+{% block scripts %}{% endblock %}
+</head>
+{% endblock %}
+
+{% block navigation %}
+<div id="navigation">
+ <div class="left_navigation">
+  <div class="ui-widget">
+    <h2 class="ui-widget-header header"><span><a href="/" >Home</a></span></h2>
+ <h2 class="ui-widget-header header"><span>Basic Items</span></h2>
+    <div class="ui-widget-content box_content"><table border=0 width=188>
+      <tr><td><div class="link_with_tag"><a href="/ip_domain" >IP Domains Show / Add</a></div></td></tr>
+      <tr><td><div class="link_with_tag"><a href="/ip_network/1" >IP Networks Show / Add</a></div></td></tr>
+      <tr><td><div class="link_with_tag"><a href="/vlan/" >VLANs Show Add</a></div></td></tr>
+      <tr><td><div class="link_with_tag"><a href="/vlan_domain/" >VLAN Domains Show / Add</a></div></td></tr>
+      </table></div>
+
+    <h2 class="ui-widget-header header"><span>Additional Items</span></h2>
+    <div class="ui-widget-content box_content"><table border=0 width=188>
+      <tr><td><div class="link_with_tag"><a href="/local/" >Configuration</a></div></td></tr>
+      </table></div>
+    <div class="ui-widget-content box_content">
+
+</div>
+
+   </div> <!-- END OF DIV "accordion" -->
+ </div>     <!-- END OF DIV "left_navigation" -->
+</div>         <!-- END OF DIV "navigation" -->
+{% endblock %}
+
+{% macro datatable(id, columns) -%}
+<div id="dt_example"> <div id="container"> <div id="demo">
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="{{ id }}">
+<thead>
+<tr>
+{% for item in columns %}
+<th>{{ item }}</th>
+{% endfor %}
+</tr>
+</thead>
+</table>
+</div></div></div>
+{%- endmacro %}

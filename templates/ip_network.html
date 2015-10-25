@@ -1,0 +1,28 @@
+{% extends "base_elements.html" %}
+{% block scripts %}<script src="/js/ipbucket.js"></script>{% endblock %} 
+{% block bodyclass %}class='ip_network'{% endblock %}
+{% block maincontent %}
+<div id="maincontent">
+<div id="ip_domain_id" name="ip_domain_id" value={{ data.ip_domain_id }}></div>
+<div id="network_id" name="network_id" value={{ data.id }}></div>
+<div id="ip" name="ip" value={{ data.ip }}></div>
+<div id="mask" name="mask" value={{ data.mask }}></div>
+<h2>Network: <div name='network_network' id='network_network'>{{ data.ip_string }}</div></h2>
+<h2>Name: <div name='network_name' id='network_name'></div>{{ data.name }}</h2>
+<h2>Domain: <div name='network_domain' id='network_domain'></div>{{ data.ip_domain_id }}</h2>
+
+
+{{ datatable('ip_address_table', ['ID','Address','FQDN','description','Reserved',''] ) }}
+<select id='AddressActionSelect'>
+<option value="">-- Choose Action --</option>
+<option value="start">start</option>
+<option value="stop">stop</option>
+<option value="forcestop">force stop</option>
+<option value="remove">remove</option>
+</select>
+
+<button id='ip_address_button'>Go</button>
+</div>
+{% endblock %}
+
+

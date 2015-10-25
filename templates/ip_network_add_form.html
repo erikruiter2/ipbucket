@@ -1,0 +1,19 @@
+{% extends "base_elements.html" %}
+{% block scripts %}<script src="/js/ipbucket.js"></script>{% endblock %} 
+{% block bodyclass %}class='ip_network_add'{% endblock %}
+{% block maincontent %}
+<div id="maincontent">
+
+<h1>Add new IP Network</h1>
+
+<form name="ip_network_add_form" id="ip_network_add_form">
+IP Domain: <select name='ip_domain' id='ip_domain'></select><br>
+Network name: <input type=text name='name' id='name'><br>
+Network address / mask: <input type=text name='address' id='address'><br>
+Comments: <input type=textarea name='comment' id='comment'><br>
+<br>
+
+</form>
+<button id='ip_network_add_button'>Add</button>
+</div>
+{% endblock %}

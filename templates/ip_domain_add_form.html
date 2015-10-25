@@ -1,0 +1,16 @@
+{% extends "base_elements.html" %}
+{% block scripts %}<script src="/js/ipbucket.js"></script>{% endblock %} 
+{% block bodyclass %}class='ip_domain_add'{% endblock %}
+{% block maincontent %}
+<div id="maincontent">
+
+<h1>Add new IP Domain</h1>
+
+<form id="ip_domain_add_form">
+IP Domain name: <input type=text name='name' id='name'><br>
+Comments: <input type=textarea name='comment' id='comment'><br>
+</form>
+<br>
+<button id='ip_domain_add_button'>Add</button>
+</div>
+{% endblock %}

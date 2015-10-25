@@ -1,0 +1,19 @@
+{% extends "base_elements.html" %}
+{% block scripts %}<script src="/js/ipbucket.js"></script>{% endblock %} 
+{% block bodyclass %}class='ip_domain_overview'{% endblock %}
+{% block maincontent %}
+<div id="maincontent">
+
+<h1>IP Domains</h1>
+{{ datatable('ip_domain_table', ['ID','Name','# IPv4 Networks','# IPv6 Networks','c'] ) }}
+<select id='NetworksActionSelect'>
+<option value="">-- Choose Action --</option>
+<option value="start">start</option>
+<option value="stop">stop</option>
+<option value="forcestop">force stop</option>
+<option value="remove">remove</option>
+</select>
+
+<button id='ip_domain_overview_button'>Go</button>
+</div>
+{% endblock %}
