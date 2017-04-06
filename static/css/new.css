@@ -407,3 +407,17 @@ input[disabled], select[disabled], textarea[disabled] {
     filter:Alpha(Opacity=35);
     background-image: none;
 }
+
+#myProgress {
+  width: 100%;
+  background-color: #ddd;   
+  text-align: top;
+  line-height: 18px;
+  color: white;
+}
+
+#myBar {
+  width: 0%;
+  height: 16px;
+  background-color: #4CAF50;
+}

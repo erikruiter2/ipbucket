@@ -2,7 +2,8 @@ resources/*
 *.pyc
 Icon?
 .DS_Store
-
+static/img/.DS_Store
+static/css/.DS_Store
 # vim
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]

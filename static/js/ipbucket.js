@@ -108,21 +108,30 @@ function init_ip_address_table(columnArray, VLANarray) {
     return ip_address_table;
 }
 
-function ip_address_update(value, cellpos)
+function ip_address_update(value, cellpos, celldata)
 { 
     // cellpos[0] = row , [1] = column (hidden skipped), [2] = column (hidden not skipped)
-    if (cellpos[2] == 2) data = { 'fqdn': value };
-    if (cellpos[2] == 3) data = { 'description': value };
-    if (cellpos[2] == 4) data = { 'reserved': (value === "true") };
-
-    alert( $("#ip_address_table tr:eq(" + (cellpos[0]+1).toString() + ") td:eq(1)").text() + " " + dot2num($("#ip_address_table tr:eq(" + (cellpos[0]+1).toString() + ") td:eq(1)").text()));
-    ip = dot2num($("#ip_address_table tr:eq(" + (cellpos[0]+1).toString() + ") td:eq(1)").text());
-    //$("#ip_address_table tr:eq(" + (cellpos[0]+1).toString() + ") td:eq(0)").append('<img src="/img/ajax-loader.gif">');
-    //$('#notificationarea').html('<img src="/img/ajax-loader.gif">');
-
-    ajax_call("PUT", "/api/ip_address/" + $("#ip_domain_id").attr('value') + "/" + ip, data, callback_ip_address_update)
+    var data={};
+    rowdata = ip_address_table.fnGetData($("#ip_address_table tr:eq(" + (cellpos[0]+1).toString() + ")"));
+    //$("#ip_address_table tr:eq(" + (cellpos[0]+1).toString() + ") td:eq(0)").html('<img src="/img/ajax-loader.gif">');
+    
+    // create new entry
+    if (rowdata[5].indexOf("-1") != -1) {
+        data.ip = rowdata[0];
+        data.ip_domain_id = $("#ip_domain_id").attr('value');
+        if (cellpos[2] == 2) data.fqdn = value; else data.fqdn = "";
+        if (cellpos[2] == 3) data.description = value; else data.description = "";
+        if (cellpos[2] == 4) data.reserved = (value === "true"); else  data.reserved = false; //compare value, if value is true, set reserved to true
+        ajax_call("POST", "/api/ip_address/", data, callback_ip_address_update);
+    }
+    // update existing entry
+    else {
+        if (cellpos[2] == 2) data.fqdn = value; 
+        if (cellpos[2] == 3) data.description = value; 
+        if (cellpos[2] == 4) data.reserved = (value === "true");  //compare value, if value is true, set reserved to true
+        ajax_call("PUT", "/api/ip_address/" + $("#ip_domain_id").attr('value') + "/" + rowdata[0], data, callback_ip_address_update);
+    }
 }
-
 
 
 function callback_ip_address_update(data,status) 
@@ -130,7 +139,6 @@ function callback_ip_address_update(data,status)
     $('#notificationarea').append('<table width=800px border=1><tr><td>' + data['notification'] + '</td></tr></table>');
     ajax_call("GET", "/api/ip_address/" + $("#ip_domain_id").attr('value') + "/" + $("#ip").attr('value') + "/" + count, "", callback_ip_network); 
 }
-
 
 function ip_domain_add_buttonClick()
 {
@@ -152,14 +160,10 @@ function ip_network_add_buttonClick()
     ajax_call("POST", "/api/ip_network/" , data, callback_add)
 }
 
-
-
 function callback_add(data,status) 
 {
     $('#notificationarea').html('<table width=800px border=1><tr><td>' + data['notification'] + '</td></tr></table>');
 }
-
-
 
 function callback_ip_network_overview(data,status) 
 {
@@ -171,8 +175,8 @@ function callback_ip_network_overview(data,status)
         parent_id= ' data-tt-parent-id="' + data.result[i].parent + '"';
         row = '<tr data-tt-id="' + data.result[i].id + '"'+ parent_id + '">' 
             + '<td><a href="' + data.result[i].ip_domain_id + '/' + data.result[i].id + '">' + data.result[i].ip + '</a></td>'
-            + '<td>' + data.result[i].name  + '</td>'
-            + '<td>' + '</td>'
+            + '<td><a href="' + data.result[i].ip_domain_id + '/' + data.result[i].id + '">' + data.result[i].name + '</a></td>'
+            + '<td><div id="myProgress"><div id="myBar" style="width:' + data.result[i].utilisation_pct + '%"></div></div>'+ data.result[i].utilisation_string + '</td>'
             + '<td><input type=checkbox></input></td>'
             + '</tr>';
         rows = rows + row
@@ -204,16 +208,14 @@ function callback_ip_domain_overview(data,status)
 
 function callback_ip_network(data,status) 
 {
-
     var columnArray =[];
     if (ip_address_table) ip_address_table.fnDestroy(); // destroy the current ip_address_table table
     for (var i=0; i < Object.keys(data.result).length; i++) {
         if (data.result[i].reserved == true) reserved = "Yes";
         else reserved = "No";
-        columnArray.push( [ data.result[i].ip, data.result[i].ip_string, data.result[i].fqdn , data.result[i].ip + " " + data.result[i].description, reserved, "<input type=checkbox id='cb_ip_address_" + data.result[i].id + "'>"]) ;
+        columnArray.push( [ data.result[i].ip, data.result[i].ip_string, data.result[i].fqdn, data.result[i].description, reserved, "<input type=checkbox id='cb_ip_address_" + data.result[i].id + "'>"]) ;
     }
     $("#ip_address_table").show();  
-    console.log(columnArray);
     ip_address_table = init_ip_address_table(columnArray);
 };
 

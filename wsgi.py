@@ -21,11 +21,16 @@ from sqlalchemy import create_engine, MetaData, update
 from flask import Flask, request, render_template, Response, Blueprint, jsonify
 app = Flask(__name__)
 from ipaddr_func import ip2long, long2ip, is_valid_ipv4_address, is_valid_ipv6_address
+import logging
+from logging.handlers import RotatingFileHandler
 
 init_db()
 
 wsgi_app = Blueprint('wsgi_app', __name__)
 
+handler = RotatingFileHandler('ipbucket.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
 def response(result = "", notification = "", request_info = None):
   return jsonify( { 'result' : result , 'notification' : notification, 'request_info': dict(request.view_args) })
 
@@ -172,8 +177,10 @@ def db_query_all_IPv4Network(ip_domain_id):
     entries.append(entrylist)
     entrylist = dict()
   entries = add_parents(entries)
+  entries = add_utilisation(entries)
   for i in range (0, len(entries)):
     entries[i]['ip'] = long2ip(entries[i]['ip'])  + "/" + str(entries[i]['mask'])
+  
   return entries
 
 def add_parents(entries):
@@ -184,6 +191,21 @@ def add_parents(entries):
           if p['ip'] == c['ip']: 
             if c['mask'] > p['mask']: c['parent'] = p['id']
           else: c['parent'] = p['id']
+  return entries
+
+def add_utilisation(entries):
+  for i in entries:
+    count = pow(2, (32 - i['mask']))
+    result = IPv4Address.query.filter(((IPv4Address.ip >= i['ip']) & (IPv4Address.ip <= i['ip']+count)) & IPv4Address.ip_domain_id == i['ip_domain_id']).all()
+    
+    app.logger.error(len(result))
+    
+    
+    
+    i['utilisation_string'] = str(len(result)) + " / " +  str(count)
+
+    i['utilisation_pct'] = (float(len(result)) / float(count)) * 100
+    app.logger.error(i)
   return entries
     
 def IPv4Network_Contains(parent_entry, child_entry):
@@ -205,32 +227,25 @@ def db_query_IPv4Network(ip_domain_id , network_id):
 
 
 def db_query_IPv4Address(ip_domain_id, ip, count):
-  """ Queries a list of ip addresses in a specified ip_domain, starting with ip (int value), and all addresses upto ip+count"""
+  """ Queries a list of ip addresses in a specified ip_domain, starting with ip (int value), up to the specified mask"""
   entries = list()
-  entrylist = dict()
-
-  result = IPv4Address.query.filter(((IPv4Address.ip >= ip) & (IPv4Address.ip <= ip+count)) & IPv4Address.ip_domain_id == ip_domain_id).all()
-
-  for entry in result:
-    for value in vars(entry):
-      if value != '_sa_instance_state':
-        entrylist[value] = vars(entry)[value]
-        
-    entries.append(entrylist)
-    entrylist = dict()  
-  iplist = list()
-  for i in range (0, len(entries)):
-    entries[i]['ip_string'] = long2ip(entries[i]['ip'])
-    iplist.append(entries[i]['ip'])
-
   for i in range (0, count):
-    if ip+i not in iplist:
-      entries.append({ "id": -1 ,"ip" : ip + i , "ip_string" : long2ip(ip + i) , "ip_domain_id": ip_domain_id, "fqdn":"", "description":"", "reserved": False })
+    entries.append({ "id": -1 ,"ip" : ip + i , "ip_string" : long2ip(ip + i) , "ip_domain_id": ip_domain_id, "fqdn":"", "description":"", "reserved": False })
+  
+  result = IPv4Address.query.filter(((IPv4Address.ip >= ip) & (IPv4Address.ip <= ip+count)) & IPv4Address.ip_domain_id == ip_domain_id).all()
+  
+  for i in range (0,len(entries)):
+    for entry in result:
+      if entries[i]['ip'] == entry.ip:
+        entries[i]['id'] = entry.id
+        entries[i]['fqdn'] = entry.fqdn
+        entries[i]['description'] = entry.description
+        entries[i]['reserved'] = entry.reserved         
   return entries
 
 def db_change_IPv4Address(ip_domain_id, ip, data):
   print ip_domain_id, ip, data
-  print "bla"
+  stmt = ""
   for (entry) in data:
 
     if entry == 'ip_domain_id':
