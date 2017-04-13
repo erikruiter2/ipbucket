@@ -16,6 +16,6 @@ Web interface:
  -View / update IPv4 address records
 
 REST interface:
- - IP Domain GET, POST
+ - IP Domain GET, POST, DELETE
  - IPv4 network GET, POST
- - IPv4 address GET, PUT, POST
+ - IPv4 address GET, PUT, POST, DELETE
