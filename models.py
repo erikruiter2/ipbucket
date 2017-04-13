@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import validates
 from database import Base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import relationship
+
 
 class IPv4Network(Base):
     __tablename__ = 'ipv4network'
@@ -12,22 +13,22 @@ class IPv4Network(Base):
     name = Column(String(255), nullable=False)
     comment = Column(String(1024))
 
-    __table_args__ = (UniqueConstraint('ip_domain_id', 'ip','mask'),)
+    __table_args__ = (UniqueConstraint('ip_domain_id', 'ip', 'mask'),)
 
     @validates('mask')
     def validate_mask(self, key, mask):
-    	if (mask < 0) or (mask > 32):
-    		raise ValueError('Mask must be value between 0 and 32')
-    	return mask
+        if (mask < 0) or (mask > 32):
+            raise ValueError('Mask must be value between 0 and 32')
+        return mask
 
     @validates('name')
     def validate_name(self, key, name):
-    	if len(name) == 0:
-    		raise ValueError('network name must not be empty')
-    	return name
+        if len(name) == 0:
+            raise ValueError('network name must not be empty')
+        return name
 
     def __init__(self, ip_domain_id=None, name=None, ip=None, mask=None, comment=None):
-    	self.ip_domain_id = ip_domain_id
+        self.ip_domain_id = ip_domain_id
         self.name = name
         self.ip = ip
         self.mask = mask
@@ -35,6 +36,7 @@ class IPv4Network(Base):
 
     def __repr__(self):
         return '<IPv4Network %r>' % (self.name)
+
 
 class IPDomain(Base):
     __tablename__ = 'ipdomain'
@@ -46,9 +48,9 @@ class IPDomain(Base):
 
     @validates('name')
     def validate_name(self, key, name):
-    	if len(name) == 0:
-    		raise ValueError('IP Domain name must not be empty')
-    	return name
+        if len(name) == 0:
+            raise ValueError('IP Domain name must not be empty')
+        return name
 
     def __init__(self, name=None, comment=None):
         self.name = name
@@ -56,6 +58,7 @@ class IPDomain(Base):
 
     def __repr__(self):
         return '<IPDomain %r>' % (self.name)
+
 
 class DomainIPv4(Base):
     __tablename__ = 'domainipv4'
@@ -73,6 +76,7 @@ class DomainIPv4(Base):
     def __repr__(self):
         return '<DomainIPv4 %r>' % (self.name)
 
+
 class VLANDomain(Base):
     __tablename__ = 'vlandomain'
     id = Column(Integer, primary_key=True, nullable=False)
@@ -81,9 +85,9 @@ class VLANDomain(Base):
 
     @validates('name')
     def validate_name(self, key, name):
-    	if len(name) == 0:
-    		raise ValueError('VLAN Domain name must not be empty')
-    	return name
+        if len(name) == 0:
+            raise ValueError('VLAN Domain name must not be empty')
+        return name
 
     def __init__(self, name=None, comment=None):
         self.name = name
@@ -91,6 +95,7 @@ class VLANDomain(Base):
 
     def __repr__(self):
         return '<VLANDomain %r>' % (self.name)
+
 
 class VLAN(Base):
     __tablename__ = 'vlan'
@@ -102,18 +107,19 @@ class VLAN(Base):
 
     @validates('name')
     def validate_name(self, key, name):
-    	if len(name) == 0:
-    		raise ValueError('VLAN name must not be empty')
-    	return name
+        if len(name) == 0:
+            raise ValueError('VLAN name must not be empty')
+        return name
 
-	def __init__(self, vlan_domain_id=None, vlan_id=None, name=None, comment=None):
-		self.vlan_domain_id = vlan_domain_id
-		self.vlan_id = vlan_id
-		self.name = name       
-		self.comment = comment
+    def __init__(self, vlan_domain_id=None, vlan_id=None, name=None, comment=None):
+        self.vlan_domain_id = vlan_domain_id
+        self.vlan_id = vlan_id
+        self.name = name
+        self.comment = comment
 
     def __repr__(self):
         return '<VLAN %r>' % (self.name)
+
 
 class VLANIPv4(Base):
     __tablename__ = 'vlanipv4'
@@ -124,17 +130,18 @@ class VLANIPv4(Base):
 
     @validates('name')
     def validate_name(self, key, name):
-    	if len(name) == 0:
-    		raise ValueError('VLAN name must not be empty')
-    	return name
+        if len(name) == 0:
+            raise ValueError('VLAN name must not be empty')
+        return name
 
-	def __init__(self, vlan_domain_id=None, vlan_id=None, ip4_network_id=None):
-		self.vlan_domain_id = vlan_domain_id
-		self.vlan_id = vlan_id
-		self.ip4_network_id  = ip4_network_id        
+    def __init__(self, vlan_domain_id=None, vlan_id=None, ip4_network_id=None):
+        self.vlan_domain_id = vlan_domain_id
+        self.vlan_id = vlan_id
+        self.ip4_network_id = ip4_network_id
 
     def __repr__(self):
         return '<VLANIPv4 %r>' % (self.name)
+
 
 class IPv4Address(Base):
     __tablename__ = 'ipv4address'
@@ -143,7 +150,7 @@ class IPv4Address(Base):
     ip_domain_id = Column(Integer, ForeignKey("ipdomain.id"))
     fqdn = Column(String(255), nullable=False)
     description = Column(String(1024))
-    reserved = Column(Boolean, default=0, nullable=False);
+    reserved = Column(Boolean, default=0, nullable=False)
 
     ip_domain = relationship("IPDomain", foreign_keys=[ip_domain_id])
 
@@ -152,10 +159,10 @@ class IPv4Address(Base):
     def __init__(self, id=None, ip=None, ip_domain_id=None, fqdn=None, description=None, reserved=None):
         self.id = id
         self.ip = ip
-        self.ip_domain_id = ip_domain_id 
+        self.ip_domain_id = ip_domain_id
         self.fqdn = fqdn
-        self.description = description 
-        self.reserved = reserved     
+        self.description = description
+        self.reserved = reserved
 
     def __repr__(self):
         return '<IPv4Address %r>' % (self.name)
